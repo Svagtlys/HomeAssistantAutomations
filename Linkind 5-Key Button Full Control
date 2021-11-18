@@ -1,0 +1,134 @@
+alias: Linkind 5-Key Full Control
+description: ''
+trigger:
+  - platform: mqtt
+    topic: zigbee2mqtt/Great Room Button
+condition: []
+action:
+  - choose:
+      - conditions:
+          - condition: or
+            conditions:
+              - condition: template
+                value_template: '{{trigger.payload_json.action == ''on''}}'
+              - condition: template
+                value_template: '{{trigger.payload_json.action == ''off''}}'
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: '{{trigger.payload_json.action_group == 16388}}'
+                sequence:
+                  - service: light.toggle
+                    target:
+                      entity_id: light.office_lights
+              - conditions:
+                  - condition: template
+                    value_template: '{{trigger.payload_json.action_group == 16389}}'
+                sequence:
+                  - service: light.toggle
+                    target:
+                      entity_id: light.hallway_lights
+              - conditions:
+                  - condition: template
+                    value_template: '{{trigger.payload_json.action_group == 16390}}'
+                sequence:
+                  - service: light.toggle
+                    target:
+                      entity_id: light.living_room_lights
+              - conditions:
+                  - condition: template
+                    value_template: '{{trigger.payload_json.action_group == 16391}}'
+                sequence:
+                  - service: light.toggle
+                    target:
+                      entity_id: light.kitchen_lights
+            default: []
+      - conditions:
+          - condition: template
+            value_template: '{{trigger.payload_json.action == ''brightness_move_down''}}'
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: '{{trigger.payload_json.action_group == 16388}}'
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: light.office_lights
+                    data:
+                      brightness_pct: 75
+              - conditions:
+                  - condition: template
+                    value_template: '{{trigger.payload_json.action_group == 16389}}'
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: light.hallway_lights
+                    data:
+                      brightness_step_pct: -15
+              - conditions:
+                  - condition: template
+                    value_template: '{{trigger.payload_json.action_group == 16390}}'
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: light.living_room_lights
+                    data:
+                      brightness_step_pct: -15
+              - conditions:
+                  - condition: template
+                    value_template: '{{trigger.payload_json.action_group == 16391}}'
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: light.kitchen_lights
+                    data:
+                      brightness_step_pct: -15
+      - conditions:
+          - condition: template
+            value_template: '{{trigger.payload_json.action == ''brightness_move_up''}}'
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: '{{trigger.payload_json.action_group == 16388}}'
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: light.office_lights
+                    data:
+                      brightness_step_pct: 0.25
+              - conditions:
+                  - condition: template
+                    value_template: '{{trigger.payload_json.action_group == 16389}}'
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: light.hallway_lights
+                    data:
+                      brightness_step_pct: 15
+              - conditions:
+                  - condition: template
+                    value_template: '{{trigger.payload_json.action_group == 16390}}'
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: light.living_room_lights
+                    data:
+                      brightness_step_pct: 15
+              - conditions:
+                  - condition: template
+                    value_template: '{{trigger.payload_json.action_group == 16391}}'
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: light.kitchen_lights
+                    data:
+                      brightness_step_pct: 15
+    default:
+      - service: system_log.write
+        data:
+          message: '{{trigger.payload_json}}'
+mode: parallel
+max: 3
